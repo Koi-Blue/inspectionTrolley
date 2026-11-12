@@ -1,0 +1,42 @@
+# A project translates into one executable or library.
+project:
+  device: ""
+
+  define:
+    - STM32F40_41xxx
+
+  add-path:
+    - .
+    - ./StdPeriph/inc
+    - ./motor
+
+  groups:
+    - group: Source Files
+      files:
+        - file: ./main.c
+        - file: ./board_motor.c
+        - file: ./board_uart.c
+        - file: ./uart.c
+        - file: ./retarget.c
+        - file: ./pid.c
+        - file: ./motor/motor.c
+
+    - group: StdPeriph
+      files:
+        - file: ./StdPeriph/src/stm32f4xx_gpio.c
+        - file: ./StdPeriph/src/stm32f4xx_rcc.c
+        - file: ./StdPeriph/src/stm32f4xx_tim.c
+        - file: ./StdPeriph/src/stm32f4xx_usart.c
+
+  # List components to use for your application.
+  # A software component is a re-usable unit that may be configurable.
+  components:
+    - component: ARM::CMSIS:CORE
+    - component: Device:Startup
+
+  # List executable file formats to be generated.
+  output:
+    type:
+      - elf
+      - hex
+      - map

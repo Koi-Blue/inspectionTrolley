@@ -1,0 +1,58 @@
+# A solution is a collection of related projects that share same base configuration.
+solution:
+  created-for: CMSIS-Toolbox@2.12.0
+  cdefault: # use CMSIS-Toolbox default Compiler options
+
+  # GCC (Arm GNU Toolchain) is free for commercial use.
+  # AC6 requires a paid MDK license for commercial products.
+  select-compiler:
+    - compiler: GCC
+
+  # List of miscellaneous tool-specific controls
+  misc:
+    - for-compiler: GCC # GDB requires DWARF 5
+      C-CPP:
+        - -gdwarf-5
+      ASM:
+        - -gdwarf-5
+      Link:
+        # ST startup (DFP 2.17.1) uses these names; the generated script uses CMSIS names.
+        - -Wl,--defsym=_estack=__StackTop
+        - -Wl,--defsym=_sdata=__data_start__
+        - -Wl,--defsym=_edata=__data_end__
+        - -Wl,--defsym=_sidata=__etext
+        - -Wl,--defsym=_sbss=__bss_start__
+        - -Wl,--defsym=_ebss=__bss_end__
+
+  # List the packs that define the device and/or board.
+  packs:
+    - pack: Keil::STM32F4xx_DFP@2.17.1
+    - pack: ARM::CMSIS
+
+  # List different hardware targets that are used to deploy the solution.
+  target-types:
+    - type: STM32F407VETx
+      device: STM32F407VETx
+      target-set:
+        - set:
+          images:
+            - project-context: iT_mcu.Debug
+
+  # List of different build configurations.
+  build-types:
+    - type: Debug
+      debug: on
+      optimize: none
+      misc:
+        - for-compiler: GCC
+          C:
+            - -funwind-tables # ensure reliable stack unwinding with GDB
+
+    - type: Release
+      debug: off
+      optimize: balanced
+
+  # List related projects.
+  projects:
+    - project: iT_mcu/iT_mcu.cproject.yml
+  compiler: GCC
